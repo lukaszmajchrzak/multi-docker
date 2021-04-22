@@ -8,8 +8,15 @@ before_install:
 script:
   - docker run -e CI=true lukaszmajchrzak/react-test npm test
   
-  after_success:
+after_success:
   - docker build -t lukaszmajchrzak/multi-client ./client
   - docker build -t lukaszmajchrzak/multi-nginx ./nginx
   - docker build -t lukaszmajchrzak/multi-worker ./worker
   - docker build -t lukaszmajchrzak/multi-server ./server
+    #login to dockerhub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    #push all images to dhub
+  - docker push lukaszmajchrzak/multi-client
+  - docker push lukaszmajchrzak/multi-nginx
+  - docker push lukaszmajchrzak/multi-worker
+  - docker push lukaszmajchrzak/multi-server
